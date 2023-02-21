@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Net.Sockets;
 
 namespace MyIP.Controllers
 {
@@ -19,20 +18,11 @@ namespace MyIP.Controllers
         [HttpGet(Name = "myip")]
         public IActionResult Get()
         {
-            string ipAddress = string.Empty; 
-            IPAddress ip = Request.HttpContext.Connection.RemoteIpAddress;
-            if (ip != null)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetworkV6)
-                {
-                    var name = Dns.GetHostName(); // get container id
-                    ip = Dns.GetHostEntry(name).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-                }
-                ipAddress = ip.ToString();
-                _logger.LogInformation("Get Request From IP {0}", ipAddress);
-            }
-            return Ok(ipAddress);
-
+            var remoteIpAddress = Request.HttpContext?.Connection?.RemoteIpAddress;
+            remoteIpAddress = remoteIpAddress?.MapToIPv4();
+            string parsip = remoteIpAddress?.ToString() ?? "UnKnown";
+            _logger.LogInformation("Get Request From IP {0}", parsip);
+         return  Ok(parsip);
         }
     }
 }
