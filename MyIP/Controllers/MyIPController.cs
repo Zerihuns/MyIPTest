@@ -17,8 +17,11 @@ namespace MyIP.Controllers
         [HttpGet(Name = "myip")]
         public IActionResult Get()
         {
-            _logger.LogInformation("Get Request From IP {0}", Request.HttpContext.Connection.RemoteIpAddress.ToString());
-         return  Ok(Request.HttpContext.Connection.RemoteIpAddress.ToString());
+
+            var remoteIpAddress = Request.HttpContext?.Connection?.RemoteIpAddress;
+            string parsedip = remoteIpAddress?.ToString();
+            _logger.LogInformation("Get Request From IP {0}", parsedip);
+         return  Ok(parsedip);
         }
     }
 }
